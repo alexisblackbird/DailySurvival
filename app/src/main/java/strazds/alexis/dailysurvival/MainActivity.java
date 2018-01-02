@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +27,29 @@ private static final String TAG = "MainActivity";
         // old/Daily testTask = new Daily("testamongo");
 
 
+    }
+
+    // this chunk isn't in the how-to but is needed to get the overflow menu to show up!
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbarthings, menu);
+        return true;
+    }
+
+    // here we add our handling of the buttons ... I should probably make a class that handles this so I don't need to copy/paste the whole thing to each activity
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_moarhealth:
+               Log.i(TAG, "Action button pressed.");
+                return true;
+
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     public void moarHealth(View view){
