@@ -39,6 +39,8 @@ public abstract class Task {
     public void completeTask(){
         this.taskCompleted = true;
         PlayerData.playerExperience++;
+
+        Log.v(TAG, this.taskName + "completed.");
         // needs a switch for task type rewards, the period rewards will be at the sub level
         // but like enums are fucked???? so not sure what to do yet
 
