@@ -21,20 +21,22 @@ import java.util.List;
 
 public class TaskListAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener {
     private ViewHolder holder;
-    private List<Daily> list;
+    public List<Task> list;
     private Context context;
+    private FragmentScrollableList fragment;
 
     private static final String TAG = "TaskListAdapter";
 
-    public TaskListAdapter(Context context, List<Daily> list) {
+    public TaskListAdapter(Context context, List<Task> list, FragmentScrollableList fragment) {
         super(context, 0, list);
         this.list = list;
         this.context = context;
+        this.fragment = fragment;
     }
 
     static class ViewHolder {
         public CheckBox taskCheckBox;
-        public Daily task;
+        public Task task;
     }
 
 
