@@ -1,6 +1,7 @@
 package strazds.alexis.dailysurvival;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,32 +20,43 @@ import java.util.List;
  */
 
 public class TaskListAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener {
-
+    private ViewHolder holder;
     private List<Daily> list;
     private Context context;
+
+    private static final String TAG = "TaskListAdapter";
 
     public TaskListAdapter(Context context, List<Daily> list) {
         super(context, 0, list);
         this.list = list;
         this.context = context;
-
-
     }
 
+    static class ViewHolder {
+        public CheckBox taskCheckBox;
+        public Daily task;
+    }
 
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.task_checker_row, parent, false);
+        View view = convertView;
+        if (view == null){
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.task_checker_row, parent, false);
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.taskCheckBox = (CheckBox) view.findViewById(R.id.taskCheckBox);
+            view.setTag(viewHolder);
+        }
 
 
+
+        ViewHolder holder = (ViewHolder) view.getTag();
+        holder.task = list.get(position);
         //Set task's checkbox label & checked state
-        CheckBox taskCheckBox= (CheckBox) view.findViewById(R.id.taskCheckBox);
-        taskCheckBox.setText(list.get(position).taskName);
-        taskCheckBox.setChecked(list.get(position).taskCompleted);
-
-        taskCheckBox.setOnCheckedChangeListener(this);
+        holder.taskCheckBox.setText(list.get(position).taskName);
+        holder.taskCheckBox.setChecked(list.get(position).taskCompleted);
+        holder.taskCheckBox.setOnCheckedChangeListener(this);
 
         return view;
     }
@@ -52,5 +64,24 @@ public class TaskListAdapter extends ArrayAdapter implements CompoundButton.OnCh
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
 
+        View row = (View) buttonView.getParent();
+        ViewHolder holder = (ViewHolder) row.getTag();
+
+        if (isChecked){
+            holder.task.completeTask();
+        } else {
+            // will probably need this for undo logic
+        }
+
+        Log.i(TAG, holder.task.taskName + "checked");
+
+       Log.i(TAG, "Task checked" );
+       if (list != null){
+           Log.i(TAG, "List-ho!");
+       }
+
+       if (holder != null){
+           Log.i(TAG, "Holder-ho!");
+       }
     }
 }
