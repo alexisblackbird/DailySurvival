@@ -1,89 +1,96 @@
 package strazds.alexis.dailysurvival;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-
-
 import java.util.List;
 
+import strazds.alexis.dailysurvival.Data.Incidental;
 
-/**
- * Created by straz on 2018-04-04.
- */
+public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
 
-public class TaskListAdapter extends ArrayAdapter implements CompoundButton.OnCheckedChangeListener {
-    private ViewHolder holder;
-    public List<Task> list;
-    private Context context;
-    private FragmentScrollableList fragment;
-
+    private List<Incidental> list;
     private static final String TAG = "TaskListAdapter";
 
-    public TaskListAdapter(Context context, List<Task> list, FragmentScrollableList fragment) {
-        super(context, 0, list);
-        this.list = list;
-        this.context = context;
-        this.fragment = fragment;
+    public TaskListAdapter(){
+
     }
 
-    static class ViewHolder {
-        public CheckBox taskCheckBox;
-        public Task task;
-    }
-
-
+    @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null){
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.task_checker_row, parent, false);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.taskCheckBox = (CheckBox) view.findViewById(R.id.taskCheckBox);
-            view.setTag(viewHolder);
-        }
+    public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.task_checker_row, parent, false);
+        TaskViewHolder viewHolder = new TaskViewHolder(view);
 
-
-        ViewHolder holder = (ViewHolder) view.getTag();
-        holder.task = list.get(position);
-        //Set task's checkbox label & checked state
-        holder.taskCheckBox.setText(list.get(position).taskName);
-        holder.taskCheckBox.setChecked(list.get(position).taskCompleted);
-        holder.taskCheckBox.setOnCheckedChangeListener(this);
-
-        return view;
+        return viewHolder;
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        Incidental task = list.get(position);
 
-        View row = (View) buttonView.getParent();
-        ViewHolder holder = (ViewHolder) row.getTag();
+        holder.task = task;
+        holder.taskCheckBox.setText(task.getTaskName());
+        holder.taskCheckBox.setChecked(task.getTaskCompleted());
 
-        if (isChecked){
-            holder.task.completeTask();
+    }
+
+    @Override
+    public int getItemCount() {
+        if(list == null){
+            return 0;
         } else {
-            // will probably need this for undo logic
+            return list.size();
         }
 
-        Log.i(TAG, holder.task.taskName + "checked");
-
-       Log.i(TAG, "Task checked" );
-       if (list != null){
-           Log.i(TAG, "List-ho!");
-       }
-
-       if (holder != null){
-           Log.i(TAG, "Holder-ho!");
-       }
     }
+
+    public void setTaskList (List<Incidental> taskList){
+        list = taskList;
+        notifyDataSetChanged();
+        Log.d(TAG, "Task list updated.");
+
+    }
+
+    class TaskViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener{
+
+        CheckBox taskCheckBox;
+        Incidental task;
+
+        public TaskViewHolder(View taskView){
+            super(taskView);
+
+            taskCheckBox = (CheckBox) taskView.findViewById(R.id.taskCheckBox);
+            taskCheckBox.setOnCheckedChangeListener(this);
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+
+            Log.d(TAG, "onCheckedChanged() called");
+
+            if (buttonView.isPressed()){ /* isPressed() needed to get if user checked
+                                            otherwise will be called infinitely */
+                Log.d(TAG, task.getTaskName() + " checked");
+                TaskManager.getInstance(buttonView.getContext()).completeTask(task);
+            } else {
+                // will probably need this for undo logic
+            }
+
+        }
+
+
+    }
+
+
+
 }

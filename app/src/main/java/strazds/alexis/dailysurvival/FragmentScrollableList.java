@@ -1,8 +1,16 @@
 package strazds.alexis.dailysurvival;
 
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.List;
-import java.util.Vector;
+
+import strazds.alexis.dailysurvival.Data.Incidental;
 
 
 /**
@@ -18,11 +27,14 @@ import java.util.Vector;
  */
 
 public class FragmentScrollableList extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-
+    // still needs the overflow menu refresh option for accessibility reasons
     private static final String TAG = "FragmentScrollableList";
-    List<Task> list;
-    TaskListAdapter adapter;
+    private LiveData<List<Incidental>> list;
+    private TaskListAdapter adapter;
+    private RecyclerView taskListView;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,15 +45,17 @@ public class FragmentScrollableList extends Fragment implements SwipeRefreshLayo
         swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        ListView listView = view.findViewById(R.id.listview);
 
-        TaskManager.instance.addNewDaily("Test1");
-        TaskManager.instance.addNewDaily("Test2");
 
-        list = populateTaskList();
+        taskListView = view.findViewById(R.id.rv_scroll_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(container.getContext());
+        taskListView.setLayoutManager(layoutManager);
 
-        adapter = new TaskListAdapter(getActivity().getBaseContext(), list, this);
-        listView.setAdapter(adapter);
+        adapter = new TaskListAdapter();
+
+        taskListView.setAdapter(adapter);
+
+        setupViewModel();
 
         return view;
 
@@ -49,28 +63,26 @@ public class FragmentScrollableList extends Fragment implements SwipeRefreshLayo
 
     @Override
     public void onRefresh(){
-        updateListView();
-    }
 
-    public List populateTaskList (){
-        list = new Vector<Task>(TaskManager.instance.dailyVector);
-        // can eventually make this so it builds the list based on a set of options in the top: ie show dailies + weeklies etc
-        return list;
+        //Will rejig this to refresh based on settings for what tasks to see from a radial menu
+        //With manual refresh so it's not reloading every time someone touches anything maybe
+        //or not and then I can delete this
 
-    }
-
-
-
-    void updateListView(){
-
-        list = populateTaskList();
-        adapter.clear();
-        adapter.addAll(list);
-        adapter.notifyDataSetChanged();
+        Log.v(TAG, "Refreshing!");
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    public void setupViewModel(){
+        TaskListViewModel viewModel = ViewModelProviders.of(this).get(TaskListViewModel.class);
+        viewModel.getTaskList().observe(this, new Observer<List<Incidental>>() {
+            @Override
+            public void onChanged(@Nullable List<Incidental> taskList) {
+                adapter.setTaskList(taskList);
+                Log.d(TAG, "Receiving database update from LiveData.");
+            }
+        });
 
+    }
 
 
 }

@@ -5,6 +5,10 @@ package strazds.alexis.dailysurvival;
  */
 
 public class PlayerData {
+
+    // todo needs a toString()
+// todo needs to do the encapsulation
+
     private static final PlayerData ourInstance = new PlayerData();
 
     public static PlayerData getInstance() {

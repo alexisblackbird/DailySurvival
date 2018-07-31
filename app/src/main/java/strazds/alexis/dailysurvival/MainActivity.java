@@ -60,7 +60,6 @@ private static final String TAG = "MainActivity";
         // todo: need to redo the displayHealth to make it work with fragments
         //displayHealth();
 
-        // old/Daily testTask = new Daily("testamongo");
 
 
     }
@@ -71,7 +70,7 @@ private static final String TAG = "MainActivity";
         return true;
     }
 
-    // here we add our handling of the action bar buttons ... I should probably make a class that handles this so I don't need to copy/paste the whole thing to each activity
+    // here we add our handling of the action bar buttons
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_moarhealth:
@@ -93,14 +92,14 @@ private static final String TAG = "MainActivity";
         displayHealth();
         Log.v(TAG, "MOAR");
         String tempName = "healthtimes" + PlayerData.playerHealth;
-        TaskManager.instance.addNewDaily(tempName);
+        TaskManager.getInstance(this).addNewDaily(tempName);
     }
 
 // should eventually move these to a class that is for menu methods
     public void quickAddTask(View view){
         EditText editText = (EditText) findViewById(R.id.quickaddtask_text);
         String name = editText.getText().toString();
-        TaskManager.instance.addNewDaily(name);
+        TaskManager.getInstance(this).addNewTask(name);
         String message = "Task created.";
         Snackbar.make(view, message,
                 Snackbar.LENGTH_LONG)
