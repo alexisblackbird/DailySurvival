@@ -12,11 +12,12 @@ import android.widget.CompoundButton;
 
 import java.util.List;
 
-import strazds.alexis.dailysurvival.Data.Incidental;
+
+import strazds.alexis.dailysurvival.Data.Task;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
 
-    private List<Incidental> list;
+    private List<Task> list;
     private static final String TAG = "TaskListAdapter";
 
     public TaskListAdapter(){
@@ -36,7 +37,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Incidental task = list.get(position);
+        Task task = list.get(position);
 
         holder.task = task;
         holder.taskCheckBox.setText(task.getTaskName());
@@ -54,7 +55,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
     }
 
-    public void setTaskList (List<Incidental> taskList){
+    public void setTaskList (List<Task> taskList){
         list = taskList;
         notifyDataSetChanged();
         Log.d(TAG, "Task list updated.");
@@ -64,7 +65,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     class TaskViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener{
 
         CheckBox taskCheckBox;
-        Incidental task;
+        Task task;
 
         public TaskViewHolder(View taskView){
             super(taskView);

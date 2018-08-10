@@ -13,15 +13,15 @@ import java.util.List;
 @Dao
 public interface TaskDao {
 
-    @Query("SELECT * FROM Incidental")
-    LiveData<List<Incidental>> loadAllIncidentals();
+    @Query("SELECT * FROM tasks")
+    LiveData<List<Task>> loadAllTasks();
 
     @Insert
-    void insertIncidental(Incidental incidental);
+    void insertTask(Task task);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateIncidental(Incidental incidental);
+    void updateTask(Task task);
 
     @Delete
-    void deleteIncidental(Incidental incidental);
+    void deleteTask(Task task);
 }

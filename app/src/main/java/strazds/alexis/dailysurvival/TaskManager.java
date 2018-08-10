@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.List;
 
 import strazds.alexis.dailysurvival.Data.AppDatabase;
-import strazds.alexis.dailysurvival.Data.Incidental;
+import strazds.alexis.dailysurvival.Data.Task;
 
 
 
@@ -48,44 +48,42 @@ class TaskManager {
 
 
 
-    public void addNewTask(String name){
-        final Incidental task = new Incidental(name);
+    public void addNewTask(String name, Task.TaskType type, String description){
+        final Task task = new Task(name, type, description);
         Log.d(TAG, "Adding task: " + name);
         AppExecutors.getInstance().diskIO().execute(new Runnable(){
             @Override
             public void run(){
-                db.taskDao().insertIncidental(task);
+                db.taskDao().insertTask(task);
                 Log.d(TAG, "Task: " + task.getTaskName() + " added to database");
             }
         });
     }
 
-    public LiveData<List<Incidental>> getTaskList (){
+    public LiveData<List<Task>> getTaskList (){
         // eventually have filters and shit
-        // I want to also pass out a list of Task that can later be casted as needed to support passing a variety of types
-        // but I'm not sure how to do that unless the dao supports instantiating everything as Tasks that can later be casted
-        LiveData<List<Incidental>> taskList = db.taskDao().loadAllIncidentals();
-        return taskList;
+
+
+        return db.taskDao().loadAllTasks();
 
     }
 
-    public void completeTask (Incidental task){
-        task.completeTask();
+    public void completeTask (Task task){
+        if (task.completeTask()){
+            final Task completedTask = task;
 
-        final Incidental completedTask = task;
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    db.taskDao().updateTask(completedTask);
+                    Log.d(TAG, "Task: " + completedTask.getTaskName() + " updated in database");
+                }
+            });
+        }
 
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.taskDao().updateIncidental(completedTask);
-                Log.d(TAG, "Task: " + completedTask.getTaskName() + " updated in database");
-            }
-        });
+
     }
 
-    public void addNewDaily(String name){
-        // Dailies not yet implemented
-    }
 
     public void resetAllDailies(){
         // Dailies not yet implemented

@@ -19,7 +19,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
-import strazds.alexis.dailysurvival.Data.Incidental;
+import strazds.alexis.dailysurvival.Data.Task;
 
 
 /**
@@ -29,7 +29,7 @@ import strazds.alexis.dailysurvival.Data.Incidental;
 public class FragmentScrollableList extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     // still needs the overflow menu refresh option for accessibility reasons
     private static final String TAG = "FragmentScrollableList";
-    private LiveData<List<Incidental>> list;
+    private LiveData<List<Task>> list;
     private TaskListAdapter adapter;
     private RecyclerView taskListView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -74,9 +74,9 @@ public class FragmentScrollableList extends Fragment implements SwipeRefreshLayo
 
     public void setupViewModel(){
         TaskListViewModel viewModel = ViewModelProviders.of(this).get(TaskListViewModel.class);
-        viewModel.getTaskList().observe(this, new Observer<List<Incidental>>() {
+        viewModel.getTaskList().observe(this, new Observer<List<Task>>() {
             @Override
-            public void onChanged(@Nullable List<Incidental> taskList) {
+            public void onChanged(@Nullable List<Task> taskList) {
                 adapter.setTaskList(taskList);
                 Log.d(TAG, "Receiving database update from LiveData.");
             }

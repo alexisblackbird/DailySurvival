@@ -18,6 +18,8 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Vector;
 
+import strazds.alexis.dailysurvival.Data.Task;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,20 +89,14 @@ private static final String TAG = "MainActivity";
         }
     }
 
-    public void moarHealth(View view){
-        PlayerData.playerHealth++;
-        displayHealth();
-        Log.v(TAG, "MOAR");
-        String tempName = "healthtimes" + PlayerData.playerHealth;
-        TaskManager.getInstance(this).addNewDaily(tempName);
-    }
+
 
 // should eventually move these to a class that is for menu methods
     public void quickAddTask(View view){
         EditText editText = (EditText) findViewById(R.id.quickaddtask_text);
         String name = editText.getText().toString();
-        TaskManager.getInstance(this).addNewTask(name);
-        String message = "Task created.";
+        TaskManager.getInstance(this).addNewTask(name, Task.TaskType.INCIDENTAL, null);
+        String message = "Quick Task created.";
         Snackbar.make(view, message,
                 Snackbar.LENGTH_LONG)
                 .show();
