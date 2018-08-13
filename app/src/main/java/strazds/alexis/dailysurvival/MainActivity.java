@@ -64,6 +64,9 @@ private static final String TAG = "MainActivity";
 
 
 
+
+
+
     }
 
     // this chunk isn't in the how-to but is needed to get the overflow menu to show up!
@@ -105,7 +108,7 @@ private static final String TAG = "MainActivity";
     }
 
     public void displayHealth(){
-        String testString = "Health: " + PlayerData.playerHealth;
+        String testString = "Health: ";
         TextView textView = findViewById(R.id.healthDisplay);
         textView.setText(testString);
 

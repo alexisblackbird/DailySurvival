@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Daily Survival</string>
+    <string name="playerData_pref_key">strazds.alexis.dailysurvival.PlayerData</string>
 </resources>
