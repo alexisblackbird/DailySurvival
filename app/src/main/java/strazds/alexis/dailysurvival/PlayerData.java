@@ -9,6 +9,15 @@ import android.support.annotation.NonNull;
  */
 
 public class PlayerData {
+    /*
+    Stores data specific to the player's character, and makes it available to the rest of the app
+    via incapsulated methods with some checking for keeping values in the right range.
+
+    Get methods set default values for in a new game.
+
+    Currently uses SharedPreferences for persistence, but it might make sense to switch to a database
+    structure later to support multiplayer things.
+     */
 
     // might be more efficient to store the references in local memory and only get from sharedpreferences when updated
     // but I would have to look in to that and this is definitely cleaner for now
@@ -21,6 +30,7 @@ public class PlayerData {
 
     private static final String momentumKey = "MOMENTUM";
     private static final String playerHealthKey = "PLAYER_HEALTH";
+    private static final String maxPlayerHealthKey = "MAX_PLAYER_HEALTH";
     private static final String playerExperienceKey = "PLAYER_EXPERIENCE";
     private static final String squalorKey = "SQUALOR";
 
@@ -55,9 +65,12 @@ public class PlayerData {
 
     public void decrementMomentum(){
         int current = getMomentum();
-        SharedPreferences.Editor editor = savedPlayerData.edit();
-        editor.putInt(momentumKey, current - 1);
-        editor.apply();
+        if(current > 0){
+            SharedPreferences.Editor editor = savedPlayerData.edit();
+            editor.putInt(momentumKey, current - 1);
+            editor.apply();
+        }
+
     }
 
     public int getPlayerHealth(){
@@ -67,7 +80,13 @@ public class PlayerData {
     public void addPlayerHealth(int change){
         int current = getPlayerHealth();
         SharedPreferences.Editor editor = savedPlayerData.edit();
-        editor.putInt(playerHealthKey, current + change);
+        // health can't go above maxHealth
+        if(current + change > getMaxPlayerHealth()){
+            editor.putInt(playerHealthKey, getMaxPlayerHealth());
+        } else {
+            editor.putInt(playerHealthKey, current + change);
+        }
+
         editor.apply();
     }
 
@@ -76,6 +95,10 @@ public class PlayerData {
         SharedPreferences.Editor editor = savedPlayerData.edit();
         editor.putInt(playerHealthKey, current - change);
         editor.apply();
+    }
+
+    public int getMaxPlayerHealth(){
+        return savedPlayerData.getInt(maxPlayerHealthKey, 5);
     }
 
     public int getPlayerExperience(){
@@ -109,9 +132,11 @@ public class PlayerData {
 
     public void decrementSqualor(){
         int current = getSqualor();
-        SharedPreferences.Editor editor = savedPlayerData.edit();
-        editor.putInt(squalorKey, current - 1);
-        editor.apply();
+        if(current > 0){
+            SharedPreferences.Editor editor = savedPlayerData.edit();
+            editor.putInt(squalorKey, current - 1);
+            editor.apply();
+        }
     }
 
 
