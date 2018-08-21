@@ -3,7 +3,10 @@ package strazds.alexis.dailysurvival;
 import android.content.Context;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,6 +27,8 @@ import strazds.alexis.dailysurvival.Data.Task;
 public class MainActivity extends AppCompatActivity {
 
 private static final String TAG = "MainActivity";
+private DrawerLayout drawerLayout;
+private FragmentScrollableList tasksFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,22 +50,49 @@ private static final String TAG = "MainActivity";
             }
 
             // Create a new Fragment to be placed in the activity layout
-            FragmentScrollableList firstFragment = new FragmentScrollableList();
+            tasksFragment = new FragmentScrollableList();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            tasksFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit();
+                    .add(R.id.fragment_container, tasksFragment).commit();
         }
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                        drawerLayout.closeDrawers();
+
+                        switch (item.getItemId()){
+                            case R.id.nav_tasks:
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, tasksFragment).commit();
+                                break;
+
+                            case R.id.nav_player_stats:
+
+                        }
+
+
+                        return true;
+                    }
+                }
+        );
 
 
 
 
         // todo: need to redo the displayHealth to make it work with fragments
         //displayHealth();
+
 
 
 
