@@ -74,11 +74,15 @@ private FragmentScrollableList tasksFragment;
                         switch (item.getItemId()){
                             case R.id.nav_tasks:
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, tasksFragment).commit();
+                                        .replace(R.id.fragment_container, tasksFragment).addToBackStack(null).commit();
                                 break;
 
                             case R.id.nav_player_stats:
+                                FragmentPlayerStats playerStatsFragment = new FragmentPlayerStats();
 
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, playerStatsFragment).addToBackStack(null).commit();
+                                break;
                         }
 
 
@@ -86,17 +90,6 @@ private FragmentScrollableList tasksFragment;
                     }
                 }
         );
-
-
-
-
-        // todo: need to redo the displayHealth to make it work with fragments
-        //displayHealth();
-
-
-
-
-
 
 
     }
@@ -139,12 +132,7 @@ private FragmentScrollableList tasksFragment;
 
     }
 
-    public void displayHealth(){
-        String testString = "Health: ";
-        TextView textView = findViewById(R.id.healthDisplay);
-        textView.setText(testString);
 
-    }
 
 
 
