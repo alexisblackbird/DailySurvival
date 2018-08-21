@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,6 +38,9 @@ private FragmentScrollableList tasksFragment;
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
         // copypasta from tutorial on setting up fragments
         // Check that the activity is using the layout version with
@@ -70,6 +75,7 @@ private FragmentScrollableList tasksFragment;
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                         drawerLayout.closeDrawers();
+
 
                         switch (item.getItemId()){
                             case R.id.nav_tasks:
@@ -107,7 +113,9 @@ private FragmentScrollableList tasksFragment;
                Log.i(TAG, "Action button pressed.");
                 return true;
 
-
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
