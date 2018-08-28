@@ -82,7 +82,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             if (buttonView.isPressed()){ /* isPressed() needed to get if user checked
                                             otherwise will be called infinitely */
                 Log.d(TAG, task.getTaskName() + " checked");
-                TaskManager.getInstance(buttonView.getContext()).completeTask(task);
+                TaskManager.getInstance(buttonView.getContext()).completeTask(task); // TODO this needs to distinguish between checking and unchecking
             } else {
                 // will probably need this for undo logic
             }

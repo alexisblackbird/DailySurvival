@@ -83,6 +83,35 @@ or when I know enough for it to be worth writing my own database implementation.
 
     }
 
+    public static TaskType stringToTaskType(String string){
+        TaskType type;
+        switch (string){
+            case "Incidental":
+                type = TaskType.INCIDENTAL;
+                return type;
+
+            case "Daily":
+                type = TaskType.DAILY;
+                return type;
+
+            case "Weekly":
+                type = TaskType.WEEKLY;
+                return type;
+
+            case "Monthly":
+                type = TaskType.MONTHLY;
+                return type;
+
+            default:
+                Log.w(TAG, "Invalid String in stringToTaskType, defaulting to INCIDENTAL since I haven't implemented a proper exception yet.");
+                return TaskType.INCIDENTAL;
+
+            // TODO add an exception if it's unrecognized input
+        }
+
+
+    }
+
     public String getTaskName(){
         return taskName;
     }

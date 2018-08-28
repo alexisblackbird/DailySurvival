@@ -117,6 +117,12 @@ private FragmentScrollableList tasksFragment;
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
 
+            case R.id.action_addTask:
+                FragmentAddTask fragmentAddTask = new FragmentAddTask();
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragmentAddTask).addToBackStack(null).commit();
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -127,18 +133,7 @@ private FragmentScrollableList tasksFragment;
 
 
 
-// should eventually move these to a class that is for menu methods
-    public void quickAddTask(View view){
-        EditText editText = (EditText) findViewById(R.id.quickaddtask_text);
-        String name = editText.getText().toString();
-        TaskManager.getInstance(this).addNewTask(name, Task.TaskType.INCIDENTAL, null);
-        String message = "Quick Task created.";
-        Snackbar.make(view, message,
-                Snackbar.LENGTH_LONG)
-                .show();
 
-
-    }
 
 
 
