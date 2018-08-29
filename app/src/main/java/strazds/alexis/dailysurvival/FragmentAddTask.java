@@ -1,11 +1,13 @@
 package strazds.alexis.dailysurvival;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -86,6 +88,10 @@ public class FragmentAddTask extends Fragment implements View.OnClickListener {
                     taskName,
                     taskType,
                     editTextTaskDescription.getText().toString());
+
+            //Close the keyboard
+            InputMethodManager imm = (InputMethodManager) this.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editTextTaskName.getWindowToken(), 0);
 
             getFragmentManager().popBackStack();
         }
