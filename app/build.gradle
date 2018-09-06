@@ -35,4 +35,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    def work_version = "1.0.0-alpha08"
+
+    implementation "android.arch.work:work-runtime:$work_version"
 }

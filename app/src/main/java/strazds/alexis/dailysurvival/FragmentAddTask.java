@@ -89,7 +89,7 @@ public class FragmentAddTask extends Fragment implements View.OnClickListener {
                     taskType,
                     editTextTaskDescription.getText().toString());
 
-            //Close the keyboard
+            //Close the keyboard, might want to make a utility method for this one day
             InputMethodManager imm = (InputMethodManager) this.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editTextTaskName.getWindowToken(), 0);
 

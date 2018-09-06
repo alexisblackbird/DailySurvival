@@ -16,6 +16,9 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY task_completed, task_type")
     LiveData<List<Task>> loadAllTasks();
 
+    @Query("SELECT * FROM tasks WHERE task_completed = 1")
+    List<Task> loadCompletedTasks();
+
     @Insert
     void insertTask(Task task);
 

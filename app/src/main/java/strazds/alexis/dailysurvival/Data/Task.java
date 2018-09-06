@@ -109,6 +109,33 @@ or when I know enough for it to be worth writing my own database implementation.
             // TODO add an exception if it's unrecognized input
         }
 
+    }
+
+    public static String taskTypeToString(TaskType type){
+        String typeString;
+        switch (type){
+            case INCIDENTAL:
+                typeString = "Incidental";
+                return typeString;
+
+            case DAILY:
+                typeString = "Daily";
+                return typeString;
+
+            case WEEKLY:
+                typeString = "Weekly";
+                return typeString;
+
+            case MONTHLY:
+                typeString = "Monthly";
+                return typeString;
+
+            default:
+                Log.w(TAG, "Invalid Type in taskTypeToString, defaulting to Incidental since I haven't implemented a proper exception yet... How did this even happen though?");
+                return "Incidental";
+
+            // TODO add an exception if it's unrecognized input
+        }
 
     }
 

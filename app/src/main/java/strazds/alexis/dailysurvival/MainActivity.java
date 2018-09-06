@@ -1,11 +1,12 @@
 package strazds.alexis.dailysurvival;
 
-import android.content.Context;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -14,16 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 
 
 import java.util.List;
-import java.util.Vector;
 
-import strazds.alexis.dailysurvival.Data.Task;
+import androidx.work.WorkManager;
+import androidx.work.WorkStatus;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -97,6 +94,31 @@ private FragmentScrollableList tasksFragment;
                 }
         );
 
+        //que up daily reset if it hasn't been and ensure it is only sheduled once
+        // due to LiveData it needs to be temporarily wrapped in an observer for the logic to work
+        final LiveData<List<WorkStatus>> quedWorkLD = WorkManager.getInstance().getStatusesByTag(DailyUpdateWorker.WORK_TAG);
+        quedWorkLD.observe(this, new Observer<List<WorkStatus>>() {
+            @Override
+            public void onChanged(@Nullable List<WorkStatus> workStatuses) {
+                Log.d(TAG, "Observer onChanged() called");
+                if(workStatuses != null){
+                    if(workStatuses.size() == 0){
+                        Log.d(TAG, "No daily update scheduled, scheduling new daily update");
+                        DailyUpdateWorker.scheduleUpdate();
+                    } else if (workStatuses.size() > 1){
+                        Log.d(TAG, "More than one daily update scheduled: clearing scheduled work and rescheduling.");
+                        WorkManager.getInstance().cancelAllWorkByTag(DailyUpdateWorker.WORK_TAG);
+                        DailyUpdateWorker.scheduleUpdate();
+                    }
+
+                } else {
+                    Log.d(TAG, "Daily update already scheduled");
+                }
+                quedWorkLD.removeObserver(this);
+            }
+        });
+
+
 
     }
 
@@ -111,6 +133,7 @@ private FragmentScrollableList tasksFragment;
         switch (item.getItemId()) {
             case R.id.action_moarhealth:
                Log.i(TAG, "Action button pressed.");
+
                 return true;
 
             case android.R.id.home:

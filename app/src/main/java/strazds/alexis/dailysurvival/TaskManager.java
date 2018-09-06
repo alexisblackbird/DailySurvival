@@ -60,13 +60,14 @@ class TaskManager {
         });
     }
 
-    public LiveData<List<Task>> getTaskList (){
+    public LiveData<List<Task>> getTaskList(){
         // eventually have filters and shit
-
 
         return db.taskDao().loadAllTasks();
 
     }
+
+
 
     public void completeTask (Task task){
         if (task.completeTask()){
@@ -81,13 +82,68 @@ class TaskManager {
             });
         }
 
+    }
+
+    public void resetTask (Task task){
+        task.taskReset();
+        final Task resetTask = task;
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                db.taskDao().updateTask(resetTask);
+                Log.d(TAG, "Task: " + resetTask.getTaskName() + " updated in database");
+            }
+        });
+
+    }
+
+    public void deleteTask(Task task){
+        db.taskDao().deleteTask(task);
+    }
+
+    public void dailyResetTasks(final boolean resetWeeklies, final boolean resetMonthlies){
+
+        Log.d(TAG, "dailyResetTasks() called");
+
+        //important for this to not happen on main thread 'cus it's taking from the database
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                //process all task updates/resets
+                //could probably make this more efficient by having a separate clean up incidentals method
+                // and having this get a list with just the ones requiring reset.
+                // maybe take weekly/monthly reset args and pass them as args to dao
+                for (Task task: db.taskDao().loadCompletedTasks()) {
+
+                    // clean up completed incidentals
+                    if (task.getTaskType() == Task.TaskType.INCIDENTAL){
+                        deleteTask(task);
+                    }
+
+                    // reset dailies
+                    if (task.getTaskType() == Task.TaskType.DAILY){
+                        resetTask(task);
+                    }
+
+                    // reset weeklies if needed
+                    if (task.getTaskType() == Task.TaskType.WEEKLY && resetWeeklies){
+                        resetTask(task);
+                    }
+
+                    // reset monthlies if needed
+                    if (task.getTaskType() == Task.TaskType.MONTHLY && resetMonthlies){
+                        resetTask(task);
+                    }
+                }
+
+            }
+        });
 
     }
 
 
-
-    public void resetAllDailies(){
-        // Dailies not yet implemented
-    }
 
 }
