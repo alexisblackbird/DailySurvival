@@ -96,18 +96,21 @@ private FragmentScrollableList tasksFragment;
 
         //que up daily reset if it hasn't been and ensure it is only sheduled once
         // due to LiveData it needs to be temporarily wrapped in an observer for the logic to work
+        WorkManager.getInstance().pruneWork();
         final LiveData<List<WorkStatus>> quedWorkLD = WorkManager.getInstance().getStatusesByTag(DailyUpdateWorker.WORK_TAG);
         quedWorkLD.observe(this, new Observer<List<WorkStatus>>() {
             @Override
             public void onChanged(@Nullable List<WorkStatus> workStatuses) {
-                Log.d(TAG, "Observer onChanged() called");
+
                 if(workStatuses != null){
+
                     if(workStatuses.size() == 0){
                         Log.d(TAG, "No daily update scheduled, scheduling new daily update");
                         DailyUpdateWorker.scheduleUpdate();
                     } else if (workStatuses.size() > 1){
                         Log.d(TAG, "More than one daily update scheduled: clearing scheduled work and rescheduling.");
                         WorkManager.getInstance().cancelAllWorkByTag(DailyUpdateWorker.WORK_TAG);
+                        WorkManager.getInstance().pruneWork();
                         DailyUpdateWorker.scheduleUpdate();
                     }
 
