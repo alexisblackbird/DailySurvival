@@ -77,14 +77,16 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
 
-            Log.d(TAG, "onCheckedChanged() called");
-
             if (buttonView.isPressed()){ /* isPressed() needed to get if user checked
                                             otherwise will be called infinitely */
-                Log.d(TAG, task.getTaskName() + " checked");
-                TaskManager.getInstance(buttonView.getContext()).completeTask(task); // TODO this needs to distinguish between checking and unchecking
-            } else {
-                // will probably need this for undo logic
+                if(buttonView.isChecked()){
+                    Log.d(TAG, task.getTaskName() + " checked");
+                    TaskManager.getInstance(buttonView.getContext()).completeTask(task);
+                } else {
+                    Log.d(TAG, task.getTaskName() + " unchecked");
+                    TaskManager.getInstance(buttonView.getContext()).resetTask(task);
+                }
+
             }
 
         }
