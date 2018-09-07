@@ -1,5 +1,6 @@
 package strazds.alexis.dailysurvival;
 
+import android.app.Fragment;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
@@ -94,7 +95,7 @@ private FragmentScrollableList tasksFragment;
                 }
         );
 
-        //que up daily reset if it hasn't been and ensure it is only sheduled once
+        //que up daily reset if it hasn't been and ensure it is only scheduled once
         // due to LiveData it needs to be temporarily wrapped in an observer for the logic to work
         WorkManager.getInstance().pruneWork();
         final LiveData<List<WorkStatus>> quedWorkLD = WorkManager.getInstance().getStatusesByTag(DailyUpdateWorker.WORK_TAG);
@@ -123,6 +124,15 @@ private FragmentScrollableList tasksFragment;
 
 
 
+    }
+
+    // https://developer.android.com/training/basics/fragments/communicating
+    // Frankly, expecting me to implement interfaces for every fragment to be able to call back to the activity
+    // and have the activity implement the logic is ridiculous
+    // let's just let them ask to have the fragment swap out
+    public void swapFragment(android.support.v4.app.Fragment fragment){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 
     // this chunk isn't in the how-to but is needed to get the overflow menu to show up!

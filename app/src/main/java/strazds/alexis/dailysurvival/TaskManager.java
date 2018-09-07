@@ -99,7 +99,17 @@ class TaskManager {
     }
 
     public void deleteTask(Task task){
-        db.taskDao().deleteTask(task);
+
+        final Task deleteTask = task;
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                db.taskDao().deleteTask(deleteTask);
+                Log.d(TAG, "Task: " + deleteTask.getTaskName() + " deleted");
+            }
+        });
+
     }
 
     public void dailyResetTasks(final boolean resetWeeklies, final boolean resetMonthlies){

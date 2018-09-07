@@ -1,12 +1,15 @@
 package strazds.alexis.dailysurvival;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -15,13 +18,16 @@ import java.util.List;
 
 import strazds.alexis.dailysurvival.Data.Task;
 
+
+
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
 
     private List<Task> list;
     private static final String TAG = "TaskListAdapter";
+    private Activity activity;
 
-    public TaskListAdapter(){
-
+    public TaskListAdapter(MainActivity activity){
+        this.activity = activity;
     }
 
     @NonNull
@@ -40,7 +46,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         Task task = list.get(position);
 
         holder.task = task;
-        holder.taskCheckBox.setText(task.getTaskName());
+        holder.taskNameButton.setText(task.getTaskName());
         holder.taskCheckBox.setChecked(task.getTaskCompleted());
 
     }
@@ -62,9 +68,10 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
     }
 
-    class TaskViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener{
+    class TaskViewHolder extends RecyclerView.ViewHolder implements CompoundButton.OnCheckedChangeListener, CompoundButton.OnClickListener{
 
         CheckBox taskCheckBox;
+        Button taskNameButton;
         Task task;
 
         public TaskViewHolder(View taskView){
@@ -72,6 +79,22 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
             taskCheckBox = (CheckBox) taskView.findViewById(R.id.taskCheckBox);
             taskCheckBox.setOnCheckedChangeListener(this);
+            taskNameButton = (Button) taskView.findViewById(R.id.taskNameButton);
+            taskNameButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View buttonView){
+
+            // When task name is selected, build and show a detail view fragment of it
+
+            FragmentTaskDetail fragmentTaskDetail = new FragmentTaskDetail();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(FragmentTaskDetail.TASK_KEY, task);
+            fragmentTaskDetail.setArguments(bundle);
+
+            ((MainActivity)activity).swapFragment(fragmentTaskDetail);
+
         }
 
         @Override

@@ -51,7 +51,7 @@ public class FragmentScrollableList extends Fragment implements SwipeRefreshLayo
         LinearLayoutManager layoutManager = new LinearLayoutManager(container.getContext());
         taskListView.setLayoutManager(layoutManager);
 
-        adapter = new TaskListAdapter();
+        adapter = new TaskListAdapter(((MainActivity)getActivity()));
 
         taskListView.setAdapter(adapter);
 

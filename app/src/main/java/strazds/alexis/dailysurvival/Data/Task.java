@@ -7,6 +7,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -18,7 +20,7 @@ import strazds.alexis.dailysurvival.PlayerData;
  */
 
 @Entity(tableName = "tasks")
-public class Task {
+public class Task implements Parcelable {
 /*
 Class for tasks of all types. I had originally planned on using inheritance w/ subclasses for each type,
 but getting Room to play nice with List<Task> where each object was instantiated as its actual type is
@@ -182,7 +184,38 @@ or when I know enough for it to be worth writing my own database implementation.
         this.taskType = taskType;
     }
 
+    //Parcelable things
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
 
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
+
+    public Task(Parcel in){
+        this.id = in.readInt();
+        this.taskName = in.readString();
+        this.taskType = stringToTaskType(in.readString());
+        this.taskDescription = in.readString();
+        this.taskCompleted = in.readInt() == 1;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.taskName);
+        dest.writeString(taskTypeToString(this.taskType));
+        dest.writeString(this.taskDescription);
+        dest.writeInt(this.taskCompleted ? 1 : 0);
+    }
 
 
 }
